@@ -1,1 +1,16 @@
 .env
+
+# macOS
+.DS_Store
+
+# Gradle
+.gradle/
+.gradle-home/
+
+# Build outputs
+build/
+out/
+
+# IntelliJ IDEA
+.idea/
+*.iml
