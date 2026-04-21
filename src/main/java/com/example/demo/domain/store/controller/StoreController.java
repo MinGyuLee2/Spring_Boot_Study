@@ -21,8 +21,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/stores")
 public class StoreController {
 
+    // 가게에 리뷰를 작성하는 기능은 ReviewService에 위임합니다.
     private final ReviewService reviewService;
 
+    /**
+     * 특정 가게에 리뷰를 작성합니다.
+     *
+     * <p>REST 관점에서 리뷰는 가게 하위 리소스로 볼 수 있으므로
+     * /stores/{storeId}/reviews 경로를 사용합니다.</p>
+     */
     @PostMapping(value = "/{storeId}/reviews", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<ReviewResponse>> createReview(
             @RequestHeader(value = "X-Member-Id", defaultValue = "1") Long memberId,

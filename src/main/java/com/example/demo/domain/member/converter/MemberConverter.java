@@ -12,6 +12,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class MemberConverter {
 
+    /**
+     * 회원 엔티티를 기본 회원 조회 응답으로 변환합니다.
+     */
     public MemberResponse toResponse(Member member) {
         return new MemberResponse(
                 member.getId(),
@@ -22,6 +25,11 @@ public class MemberConverter {
         );
     }
 
+    /**
+     * 회원가입 결과 응답을 만듭니다.
+     *
+     * <p>회원 선호 음식은 연결 엔티티를 거쳐 음식 카테고리 ID 목록으로 변환합니다.</p>
+     */
     public MemberSignUpResponse toSignUpResponse(Member member) {
         List<Long> foodCategoryIds = member.getFoodPreferences().stream()
                 .map(MemberFoodPreference::getFoodCategory)
@@ -41,10 +49,16 @@ public class MemberConverter {
         );
     }
 
+    /**
+     * 회원 포인트 조회 응답으로 변환합니다.
+     */
     public MemberPointResponse toPointResponse(Member member) {
         return new MemberPointResponse(member.getId(), member.getTotalPoint());
     }
 
+    /**
+     * 완료한 미션 개수 조회 응답으로 변환합니다.
+     */
     public MemberCompletedMissionCountResponse toCompletedMissionCountResponse(Long memberId, long count) {
         return new MemberCompletedMissionCountResponse(memberId, count);
     }

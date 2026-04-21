@@ -14,9 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FoodCategoryService {
 
+    // 음식 카테고리 엔티티를 조회하는 Repository입니다.
     private final FoodCategoryRepository foodCategoryRepository;
+
+    // FoodCategory 엔티티를 응답 DTO로 변환합니다.
     private final FoodCategoryConverter foodCategoryConverter;
 
+    /**
+     * 음식 카테고리 ID로 단건 조회합니다.
+     */
     public FoodCategoryResponse getFoodCategory(Long foodCategoryId) {
         return foodCategoryRepository.findById(foodCategoryId)
                 .map(foodCategoryConverter::toResponse)

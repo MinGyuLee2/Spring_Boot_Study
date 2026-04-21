@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/regions")
 public class RegionController {
 
+    // 지역 조회 로직은 Service 계층에 위임합니다.
     private final RegionService regionService;
 
+    /**
+     * 지역 단건 정보를 조회합니다.
+     */
     @GetMapping("/{regionId}")
     public ApiResponse<RegionResponse> getRegion(@PathVariable Long regionId) {
         return ApiResponse.onSuccess(regionService.getRegion(regionId));

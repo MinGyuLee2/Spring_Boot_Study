@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/food-categories")
 public class FoodCategoryController {
 
+    // 음식 카테고리 조회 로직은 Service 계층에 위임합니다.
     private final FoodCategoryService foodCategoryService;
 
+    /**
+     * 음식 카테고리 단건 정보를 조회합니다.
+     */
     @GetMapping("/{foodCategoryId}")
     public ApiResponse<FoodCategoryResponse> getFoodCategory(@PathVariable Long foodCategoryId) {
         return ApiResponse.onSuccess(foodCategoryService.getFoodCategory(foodCategoryId));

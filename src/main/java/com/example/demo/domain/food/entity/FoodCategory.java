@@ -21,14 +21,17 @@ import lombok.NoArgsConstructor;
 @Table(name = "food_category")
 public class FoodCategory extends BaseTimeEntity {
 
+    // 음식 카테고리 테이블의 기본 키입니다.
     @Id
     @Column(name = "food_category_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 음식 카테고리 이름입니다. 중복을 허용하지 않습니다.
     @Column(nullable = false, unique = true, length = 20)
     private String name;
 
+    // 이 카테고리를 선호하는 회원 연결 목록입니다.
     @OneToMany(mappedBy = "foodCategory")
     private List<MemberFoodPreference> memberFoodPreferences = new ArrayList<>();
 }

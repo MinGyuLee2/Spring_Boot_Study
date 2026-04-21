@@ -14,9 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class RegionService {
 
+    // 지역 엔티티를 조회하는 Repository입니다.
     private final RegionRepository regionRepository;
+
+    // Region 엔티티를 응답 DTO로 변환합니다.
     private final RegionConverter regionConverter;
 
+    /**
+     * 지역 ID로 단건 조회합니다.
+     */
     public RegionResponse getRegion(Long regionId) {
         return regionRepository.findById(regionId)
                 .map(regionConverter::toResponse)

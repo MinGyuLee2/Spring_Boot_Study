@@ -8,6 +8,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ReviewConverter {
 
+    /**
+     * 리뷰 엔티티를 응답 DTO로 변환합니다.
+     *
+     * <p>ReviewPhoto 엔티티 목록은 클라이언트가 쓰기 쉬운 URL 문자열 목록으로 변환합니다.</p>
+     */
     public ReviewResponse toResponse(Review review) {
         List<String> photoUrls = review.getReviewPhotos().stream()
                 .map(photo -> photo.getPhotoUrl())

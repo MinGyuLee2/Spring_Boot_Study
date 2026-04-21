@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class MemberMissionConverter {
 
+    /**
+     * 회원 미션 엔티티를 목록 조회 응답으로 변환합니다.
+     */
     public MemberMissionResponse toResponse(MemberMission memberMission) {
         return new MemberMissionResponse(
                 memberMission.getId(),
@@ -22,6 +25,9 @@ public class MemberMissionConverter {
         );
     }
 
+    /**
+     * 미션 완료 처리 후 필요한 상태와 완료 시간만 응답으로 변환합니다.
+     */
     public MemberMissionCompleteResponse toCompleteResponse(MemberMission memberMission) {
         return new MemberMissionCompleteResponse(
                 memberMission.getId(),

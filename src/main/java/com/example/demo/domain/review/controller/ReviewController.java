@@ -14,8 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/reviews")
 public class ReviewController {
 
+    // 리뷰 조회 로직은 Service 계층에 위임합니다.
     private final ReviewService reviewService;
 
+    /**
+     * 리뷰 단건 정보를 조회합니다.
+     */
     @GetMapping("/{reviewId}")
     public ApiResponse<ReviewResponse> getReview(@PathVariable Long reviewId) {
         return ApiResponse.onSuccess(reviewService.getReview(reviewId));

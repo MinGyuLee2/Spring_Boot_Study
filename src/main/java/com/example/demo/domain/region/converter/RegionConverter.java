@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class RegionConverter {
 
+    /**
+     * 지역 엔티티를 응답 DTO로 변환합니다.
+     */
     public RegionResponse toResponse(Region region) {
         return new RegionResponse(
                 region.getId(),

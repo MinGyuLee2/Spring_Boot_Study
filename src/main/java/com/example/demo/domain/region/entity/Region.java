@@ -21,14 +21,17 @@ import lombok.NoArgsConstructor;
 @Table(name = "region")
 public class Region extends BaseTimeEntity {
 
+    // 지역 테이블의 기본 키입니다.
     @Id
     @Column(name = "region_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 지역 이름입니다. 예: 서울, 부산처럼 중복 없이 관리합니다.
     @Column(nullable = false, unique = true, length = 20)
     private String name;
 
+    // 이 지역에 속한 가게 목록입니다.
     @OneToMany(mappedBy = "region")
     private List<Store> stores = new ArrayList<>();
 }

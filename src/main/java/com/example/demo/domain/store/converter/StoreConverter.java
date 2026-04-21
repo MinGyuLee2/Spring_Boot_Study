@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class StoreConverter {
 
+    /**
+     * 가게 엔티티를 응답 DTO로 변환합니다.
+     */
     public StoreResponse toResponse(Store store) {
         return new StoreResponse(
                 store.getId(),
