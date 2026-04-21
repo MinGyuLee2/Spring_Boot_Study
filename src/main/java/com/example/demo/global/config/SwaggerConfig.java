@@ -12,16 +12,27 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * Swagger UI와 OpenAPI 문서에 표시될 기본 정보를 설정합니다.
+     *
+     * <p>{@code @Bean}으로 등록하면 springdoc-openapi가 이 설정을 읽어서
+     * API 문서 화면을 구성합니다.</p>
+     */
     @Bean
     public OpenAPI swagger() {
+        // Swagger 문서 상단에 표시되는 제목, 설명, 버전 정보입니다.
         Info info = new Info()
                 .title("UMC10th")
                 .description("10기 Swagger")
                 .version("0.0.1");
 
+        // Swagger UI에서 사용할 인증 방식의 이름입니다.
         String securityScheme = "JWT TOKEN";
+
+        // 모든 API 요청에 JWT 인증을 적용할 수 있도록 보안 요구사항을 추가합니다.
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(securityScheme);
 
+        // Authorization 헤더에 Bearer JWT 토큰을 넣는 HTTP 인증 방식을 정의합니다.
         Components components = new Components()
                 .addSecuritySchemes(securityScheme, new SecurityScheme()
                         .name(securityScheme)
@@ -29,6 +40,7 @@ public class SwaggerConfig {
                         .scheme("bearer")
                         .bearerFormat("JWT"));
 
+        // OpenAPI 객체에 문서 정보, 서버 URL, 인증 설정을 합쳐서 반환합니다.
         return new OpenAPI()
                 .info(info)
                 .addServersItem(new Server().url("/"))
