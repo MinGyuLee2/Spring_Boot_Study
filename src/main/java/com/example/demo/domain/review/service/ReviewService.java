@@ -5,12 +5,15 @@ import com.example.demo.domain.member.exception.MemberErrorCode;
 import com.example.demo.domain.member.exception.MemberException;
 import com.example.demo.domain.member.repository.MemberRepository;
 import com.example.demo.domain.mission.entity.MemberMission;
+import com.example.demo.domain.mission.enums.MemberMissionStatus;
 import com.example.demo.domain.mission.exception.MemberMissionErrorCode;
 import com.example.demo.domain.mission.exception.MemberMissionException;
 import com.example.demo.domain.mission.repository.MemberMissionRepository;
 import com.example.demo.domain.review.converter.ReviewConverter;
 import com.example.demo.domain.review.dto.CreateReviewRequest;
 import com.example.demo.domain.review.dto.ReviewResponse;
+import com.example.demo.domain.review.dto.StoreReviewPageResponse;
+import com.example.demo.domain.review.dto.StoreReviewResponse;
 import com.example.demo.domain.review.entity.Review;
 import com.example.demo.domain.review.entity.ReviewPhoto;
 import com.example.demo.domain.review.exception.ReviewErrorCode;
@@ -23,6 +26,9 @@ import com.example.demo.domain.store.exception.StoreException;
 import com.example.demo.domain.store.repository.StoreRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +62,30 @@ public class ReviewService {
         return reviewRepository.findById(reviewId)
                 .map(reviewConverter::toResponse)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
+    }
+
+    /**
+     * 특정 가게에 작성된 리뷰 목록을 페이징 조회합니다.
+     */
+    public StoreReviewPageResponse getStoreReviews(Long storeId, int page, int size) {
+        validateStore(storeId);
+
+        Page<Review> reviews = reviewRepository.findReviewsByStoreId(
+                storeId,
+                PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"))
+        );
+
+        List<StoreReviewResponse> reviewResponses = reviews.stream()
+                .map(reviewConverter::toStoreReviewResponse)
+                .toList();
+
+        return new StoreReviewPageResponse(
+                reviewResponses,
+                reviews.getNumber(),
+                reviews.getSize(),
+                reviews.getTotalElements(),
+                reviews.getTotalPages()
+        );
     }
 
     /**
@@ -100,6 +130,20 @@ public class ReviewService {
         // 회원 미션의 가게와 리뷰 대상 가게가 다르면 잘못된 요청으로 판단합니다.
         if (!memberMission.getMission().getStore().getId().equals(storeId)) {
             throw new MemberMissionException(MemberMissionErrorCode.MEMBER_MISSION_NOT_FOUND);
+        }
+
+        // 리뷰는 완료된 미션에 대해서만 작성할 수 있습니다.
+        if (memberMission.getStatus() != MemberMissionStatus.COMPLETED) {
+            throw new MemberMissionException(MemberMissionErrorCode.MEMBER_MISSION_NOT_COMPLETED);
+        }
+    }
+
+    /**
+     * 가게 존재 여부를 확인합니다.
+     */
+    private void validateStore(Long storeId) {
+        if (!storeRepository.existsById(storeId)) {
+            throw new StoreException(StoreErrorCode.STORE_NOT_FOUND);
         }
     }
 }

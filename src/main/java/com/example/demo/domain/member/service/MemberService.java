@@ -6,6 +6,7 @@ import com.example.demo.domain.food.exception.FoodCategoryException;
 import com.example.demo.domain.food.repository.FoodCategoryRepository;
 import com.example.demo.domain.member.converter.MemberConverter;
 import com.example.demo.domain.member.dto.MemberCompletedMissionCountResponse;
+import com.example.demo.domain.member.dto.MemberMyPageResponse;
 import com.example.demo.domain.member.dto.MemberPointResponse;
 import com.example.demo.domain.member.dto.MemberResponse;
 import com.example.demo.domain.member.dto.MemberSignUpRequest;
@@ -18,6 +19,7 @@ import com.example.demo.domain.member.repository.MemberFoodPreferenceRepository;
 import com.example.demo.domain.member.repository.MemberRepository;
 import com.example.demo.domain.mission.enums.MemberMissionStatus;
 import com.example.demo.domain.mission.repository.MemberMissionRepository;
+import com.example.demo.domain.review.repository.ReviewRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,9 @@ public class MemberService {
 
     // 회원이 완료한 미션 개수를 계산할 때 사용합니다.
     private final MemberMissionRepository memberMissionRepository;
+
+    // 회원이 작성한 리뷰 개수를 계산할 때 사용합니다.
+    private final ReviewRepository reviewRepository;
 
     // Entity를 API 응답 DTO로 변환하는 역할입니다.
     private final MemberConverter memberConverter;
@@ -95,6 +100,20 @@ public class MemberService {
     public MemberPointResponse getMyPoints(Long memberId) {
         Member member = getMemberEntity(memberId);
         return memberConverter.toPointResponse(member);
+    }
+
+    /**
+     * 마이페이지 화면에 필요한 회원 요약 정보를 조회합니다.
+     */
+    public MemberMyPageResponse getMyPage(Long memberId) {
+        Member member = getMemberEntity(memberId);
+        long writtenReviewCount = reviewRepository.countByMember_Id(memberId);
+        long completedMissionCount = memberMissionRepository.countByMember_IdAndStatus(
+                memberId,
+                MemberMissionStatus.COMPLETED
+        );
+
+        return memberConverter.toMyPageResponse(member, writtenReviewCount, completedMissionCount);
     }
 
     /**

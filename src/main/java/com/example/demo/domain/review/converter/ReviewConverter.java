@@ -1,6 +1,7 @@
 package com.example.demo.domain.review.converter;
 
 import com.example.demo.domain.review.dto.ReviewResponse;
+import com.example.demo.domain.review.dto.StoreReviewResponse;
 import com.example.demo.domain.review.entity.Review;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -25,6 +26,22 @@ public class ReviewConverter {
                 review.getRating(),
                 review.getContent(),
                 photoUrls
+        );
+    }
+
+    /**
+     * 가게 리뷰 목록 화면에 필요한 리뷰 응답으로 변환합니다.
+     *
+     * <p>과제 조건에 따라 사진 목록은 제외합니다.</p>
+     */
+    public StoreReviewResponse toStoreReviewResponse(Review review) {
+        return new StoreReviewResponse(
+                review.getId(),
+                review.getMember().getId(),
+                review.getMember().getNickname(),
+                review.getRating(),
+                review.getContent(),
+                review.getCreatedAt()
         );
     }
 }

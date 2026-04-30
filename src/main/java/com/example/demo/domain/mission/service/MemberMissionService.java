@@ -78,7 +78,13 @@ public class MemberMissionService {
         // 본인의 회원 미션만 완료할 수 있도록 memberId 조건을 함께 사용합니다.
         MemberMission memberMission = memberMissionRepository.findByIdAndMember_Id(memberMissionId, memberId)
                 .orElseThrow(() -> new MemberMissionException(MemberMissionErrorCode.MEMBER_MISSION_NOT_FOUND));
+
+        if (memberMission.getStatus() != MemberMissionStatus.CHALLENGING) {
+            throw new MemberMissionException(MemberMissionErrorCode.MEMBER_MISSION_NOT_CHALLENGING);
+        }
+
         memberMission.complete();
+        memberMission.getMember().addPoint(memberMission.getMission().getRewardPoint());
         return memberMissionConverter.toCompleteResponse(memberMission);
     }
 
