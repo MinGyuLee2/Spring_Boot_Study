@@ -108,4 +108,11 @@ public class Member extends SoftDeleteBaseEntity {
         member.status = MemberStatus.ACTIVE;
         return member;
     }
+
+    /**
+     * 회원 포인트를 적립합니다.
+     */
+    public void addPoint(Integer point) {
+        this.totalPoint += point;
+    }
 }

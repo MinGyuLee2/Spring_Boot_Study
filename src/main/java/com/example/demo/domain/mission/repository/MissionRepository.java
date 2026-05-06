@@ -25,20 +25,36 @@ public interface MissionRepository extends JpaRepository<Mission, Long> {
      * 지연 로딩으로 인한 추가 쿼리를 줄여줍니다.</p>
      */
     @EntityGraph(attributePaths = {"store", "store.region"})
-    @Query("""
-            select mission
-            from Mission mission
-            join mission.store store
-            join store.region region
-            where mission.status = :status
-              and region.id = :regionId
-              and not exists (
-                  select 1
-                  from MemberMission memberMission
-                  where memberMission.mission = mission
-                    and memberMission.member.id = :memberId
-              )
-            """)
+    @Query(
+            value = """
+                    select mission
+                    from Mission mission
+                    join mission.store store
+                    join store.region region
+                    where mission.status = :status
+                      and region.id = :regionId
+                      and not exists (
+                          select 1
+                          from MemberMission memberMission
+                          where memberMission.mission = mission
+                            and memberMission.member.id = :memberId
+                      )
+                    """,
+            countQuery = """
+                    select count(mission)
+                    from Mission mission
+                    join mission.store store
+                    join store.region region
+                    where mission.status = :status
+                      and region.id = :regionId
+                      and not exists (
+                          select 1
+                          from MemberMission memberMission
+                          where memberMission.mission = mission
+                            and memberMission.member.id = :memberId
+                      )
+                    """
+    )
     Page<Mission> findAvailableMissions(
             @Param("memberId") Long memberId,
             @Param("regionId") Long regionId,

@@ -2,6 +2,7 @@ package com.example.demo.domain.member.converter;
 
 import com.example.demo.domain.member.entity.MemberFoodPreference;
 import com.example.demo.domain.member.dto.MemberCompletedMissionCountResponse;
+import com.example.demo.domain.member.dto.MemberMyPageResponse;
 import com.example.demo.domain.member.dto.MemberPointResponse;
 import com.example.demo.domain.member.dto.MemberResponse;
 import com.example.demo.domain.member.dto.MemberSignUpResponse;
@@ -54,6 +55,20 @@ public class MemberConverter {
      */
     public MemberPointResponse toPointResponse(Member member) {
         return new MemberPointResponse(member.getId(), member.getTotalPoint());
+    }
+
+    /**
+     * 마이페이지 화면에 필요한 회원 요약 응답으로 변환합니다.
+     */
+    public MemberMyPageResponse toMyPageResponse(Member member, long writtenReviewCount, long completedMissionCount) {
+        return new MemberMyPageResponse(
+                member.getId(),
+                member.getNickname(),
+                member.getEmail(),
+                member.getTotalPoint(),
+                writtenReviewCount,
+                completedMissionCount
+        );
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.example.demo.domain.member.controller;
 
 import com.example.demo.domain.member.dto.MemberCompletedMissionCountResponse;
+import com.example.demo.domain.member.dto.MemberMyPageResponse;
 import com.example.demo.domain.member.dto.MemberPointResponse;
 import com.example.demo.domain.member.dto.MemberSignUpRequest;
 import com.example.demo.domain.member.dto.MemberSignUpResponse;
@@ -36,6 +37,18 @@ public class MemberController {
         MemberSignUpResponse response = memberService.signUp(request);
         return ResponseEntity.status(GeneralSuccessCode.CREATED.getHttpStatus())
                 .body(ApiResponse.onSuccess(GeneralSuccessCode.CREATED, response));
+    }
+
+    /**
+     * 마이페이지 화면에 필요한 현재 회원 요약 정보를 조회합니다.
+     *
+     * <p>아직 인증 기능이 없기 때문에 임시로 X-Member-Id 헤더를 사용합니다.</p>
+     */
+    @GetMapping("/me")
+    public ApiResponse<MemberMyPageResponse> getMyPage(
+            @RequestHeader(value = "X-Member-Id", defaultValue = "1") Long memberId
+    ) {
+        return ApiResponse.onSuccess(memberService.getMyPage(memberId));
     }
 
     /**
