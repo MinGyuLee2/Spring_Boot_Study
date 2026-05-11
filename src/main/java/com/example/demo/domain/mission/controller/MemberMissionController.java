@@ -2,16 +2,20 @@ package com.example.demo.domain.mission.controller;
 
 import com.example.demo.domain.mission.dto.MemberMissionCompleteResponse;
 import com.example.demo.domain.mission.dto.MemberMissionPageResponse;
+import com.example.demo.domain.mission.dto.OngoingMemberMissionRequest;
 import com.example.demo.domain.mission.enums.MemberMissionStatus;
 import com.example.demo.domain.mission.service.MemberMissionService;
 import com.example.demo.global.apiPayload.ApiResponse;
 import com.example.demo.global.apiPayload.code.GeneralErrorCode;
 import com.example.demo.global.exception.DomainException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -40,6 +44,21 @@ public class MemberMissionController {
         validateMemberMissionRequest(status, page, size);
 
         return ApiResponse.onSuccess(memberMissionService.getMemberMissions(memberId, status, page, size));
+    }
+
+    /**
+     * 현재 회원이 진행 중인 미션 목록을 Request Body 기반으로 조회합니다.
+     */
+    @PostMapping(value = "/ongoing", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ApiResponse<MemberMissionPageResponse> getOngoingMemberMissions(
+            @Valid @RequestBody OngoingMemberMissionRequest request
+    ) {
+        return ApiResponse.onSuccess(memberMissionService.getMemberMissions(
+                request.memberId(),
+                MemberMissionStatus.CHALLENGING,
+                request.page(),
+                request.size()
+        ));
     }
 
     /**
