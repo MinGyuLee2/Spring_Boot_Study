@@ -11,11 +11,15 @@ import com.example.demo.domain.mission.exception.MemberMissionException;
 import com.example.demo.domain.mission.repository.MemberMissionRepository;
 import com.example.demo.domain.review.converter.ReviewConverter;
 import com.example.demo.domain.review.dto.CreateReviewRequest;
+import com.example.demo.domain.review.dto.MyReviewCursorRequest;
+import com.example.demo.domain.review.dto.MyReviewCursorResponse;
+import com.example.demo.domain.review.dto.MyReviewResponse;
 import com.example.demo.domain.review.dto.ReviewResponse;
 import com.example.demo.domain.review.dto.StoreReviewPageResponse;
 import com.example.demo.domain.review.dto.StoreReviewResponse;
 import com.example.demo.domain.review.entity.Review;
 import com.example.demo.domain.review.entity.ReviewPhoto;
+import com.example.demo.domain.review.enums.ReviewSortType;
 import com.example.demo.domain.review.exception.ReviewErrorCode;
 import com.example.demo.domain.review.exception.ReviewException;
 import com.example.demo.domain.review.repository.ReviewPhotoRepository;
@@ -62,6 +66,29 @@ public class ReviewService {
         return reviewRepository.findById(reviewId)
                 .map(reviewConverter::toResponse)
                 .orElseThrow(() -> new ReviewException(ReviewErrorCode.REVIEW_NOT_FOUND));
+    }
+
+    /**
+     * 내가 작성한 리뷰 목록을 커서 기반으로 조회합니다.
+     */
+    public MyReviewCursorResponse getMyReviews(MyReviewCursorRequest request) {
+        validateMember(request.memberId());
+
+        ReviewCursor cursor = parseCursor(request.cursor(), request.sortType());
+        List<Review> reviews = findMyReviewsByCursor(request, cursor);
+
+        boolean hasNext = reviews.size() > request.size();
+        List<Review> currentReviews = reviews.stream()
+                .limit(request.size())
+                .toList();
+        List<MyReviewResponse> responses = currentReviews.stream()
+                .map(reviewConverter::toMyReviewResponse)
+                .toList();
+        String nextCursor = hasNext && !currentReviews.isEmpty()
+                ? createNextCursor(currentReviews.get(currentReviews.size() - 1), request.sortType())
+                : null;
+
+        return new MyReviewCursorResponse(responses, hasNext, nextCursor, request.size());
     }
 
     /**
@@ -121,6 +148,72 @@ public class ReviewService {
     }
 
     /**
+     * 정렬 기준에 맞는 커서 조회 쿼리를 선택합니다.
+     */
+    private List<Review> findMyReviewsByCursor(MyReviewCursorRequest request, ReviewCursor cursor) {
+        PageRequest pageRequest = PageRequest.of(0, request.size() + 1);
+
+        return switch (request.sortType()) {
+            case ID_ASC -> reviewRepository.findMyReviewsByIdAsc(
+                    request.memberId(),
+                    cursor.reviewId(),
+                    pageRequest
+            );
+            case ID_DESC -> reviewRepository.findMyReviewsByIdDesc(
+                    request.memberId(),
+                    cursor.reviewId(),
+                    pageRequest
+            );
+            case RATING_ASC -> reviewRepository.findMyReviewsByRatingAsc(
+                    request.memberId(),
+                    cursor.rating(),
+                    cursor.reviewId(),
+                    pageRequest
+            );
+            case RATING_DESC -> reviewRepository.findMyReviewsByRatingDesc(
+                    request.memberId(),
+                    cursor.rating(),
+                    cursor.reviewId(),
+                    pageRequest
+            );
+        };
+    }
+
+    /**
+     * 요청 커서 문자열을 정렬 기준에 맞게 해석합니다.
+     */
+    private ReviewCursor parseCursor(String cursor, ReviewSortType sortType) {
+        if (cursor == null || cursor.isBlank()) {
+            return new ReviewCursor(null, null);
+        }
+
+        try {
+            if (sortType == ReviewSortType.ID_ASC || sortType == ReviewSortType.ID_DESC) {
+                return new ReviewCursor(Long.parseLong(cursor), null);
+            }
+
+            String[] parts = cursor.split(":");
+            if (parts.length != 2) {
+                throw new IllegalArgumentException("Rating cursor must be rating:reviewId");
+            }
+            return new ReviewCursor(Long.parseLong(parts[1]), Integer.parseInt(parts[0]));
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("Invalid review cursor", exception);
+        }
+    }
+
+    /**
+     * 다음 요청에 사용할 커서 문자열을 생성합니다.
+     */
+    private String createNextCursor(Review review, ReviewSortType sortType) {
+        if (sortType == ReviewSortType.RATING_ASC || sortType == ReviewSortType.RATING_DESC) {
+            return review.getRating() + ":" + review.getId();
+        }
+
+        return String.valueOf(review.getId());
+    }
+
+    /**
      * 회원이 리뷰를 작성하려는 가게의 미션을 실제로 가지고 있는지 확인합니다.
      */
     private void validateMemberMission(Long memberId, Long storeId, Long memberMissionId) {
@@ -145,5 +238,20 @@ public class ReviewService {
         if (!storeRepository.existsById(storeId)) {
             throw new StoreException(StoreErrorCode.STORE_NOT_FOUND);
         }
+    }
+
+    /**
+     * 회원 존재 여부를 확인합니다.
+     */
+    private void validateMember(Long memberId) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new MemberException(MemberErrorCode.MEMBER_NOT_FOUND);
+        }
+    }
+
+    private record ReviewCursor(
+            Long reviewId,
+            Integer rating
+    ) {
     }
 }

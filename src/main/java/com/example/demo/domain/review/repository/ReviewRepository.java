@@ -1,6 +1,7 @@
 package com.example.demo.domain.review.repository;
 
 import com.example.demo.domain.review.entity.Review;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -36,4 +37,90 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
                     """
     )
     Page<Review> findReviewsByStoreId(@Param("storeId") Long storeId, Pageable pageable);
+
+    /**
+     * 내가 작성한 리뷰를 ID 내림차순 커서로 조회합니다.
+     */
+    @EntityGraph(attributePaths = {"store"})
+    @Query("""
+            select review
+            from Review review
+            join review.member member
+            join review.store store
+            where member.id = :memberId
+              and (:cursorId is null or review.id < :cursorId)
+            order by review.id desc
+            """)
+    List<Review> findMyReviewsByIdDesc(
+            @Param("memberId") Long memberId,
+            @Param("cursorId") Long cursorId,
+            Pageable pageable
+    );
+
+    /**
+     * 내가 작성한 리뷰를 ID 오름차순 커서로 조회합니다.
+     */
+    @EntityGraph(attributePaths = {"store"})
+    @Query("""
+            select review
+            from Review review
+            join review.member member
+            join review.store store
+            where member.id = :memberId
+              and (:cursorId is null or review.id > :cursorId)
+            order by review.id asc
+            """)
+    List<Review> findMyReviewsByIdAsc(
+            @Param("memberId") Long memberId,
+            @Param("cursorId") Long cursorId,
+            Pageable pageable
+    );
+
+    /**
+     * 내가 작성한 리뷰를 별점 내림차순, ID 내림차순 커서로 조회합니다.
+     */
+    @EntityGraph(attributePaths = {"store"})
+    @Query("""
+            select review
+            from Review review
+            join review.member member
+            join review.store store
+            where member.id = :memberId
+              and (
+                    :cursorRating is null
+                    or review.rating < :cursorRating
+                    or (review.rating = :cursorRating and review.id < :cursorId)
+              )
+            order by review.rating desc, review.id desc
+            """)
+    List<Review> findMyReviewsByRatingDesc(
+            @Param("memberId") Long memberId,
+            @Param("cursorRating") Integer cursorRating,
+            @Param("cursorId") Long cursorId,
+            Pageable pageable
+    );
+
+    /**
+     * 내가 작성한 리뷰를 별점 오름차순, ID 오름차순 커서로 조회합니다.
+     */
+    @EntityGraph(attributePaths = {"store"})
+    @Query("""
+            select review
+            from Review review
+            join review.member member
+            join review.store store
+            where member.id = :memberId
+              and (
+                    :cursorRating is null
+                    or review.rating > :cursorRating
+                    or (review.rating = :cursorRating and review.id > :cursorId)
+              )
+            order by review.rating asc, review.id asc
+            """)
+    List<Review> findMyReviewsByRatingAsc(
+            @Param("memberId") Long memberId,
+            @Param("cursorRating") Integer cursorRating,
+            @Param("cursorId") Long cursorId,
+            Pageable pageable
+    );
 }

@@ -1,8 +1,10 @@
 package com.example.demo.domain.review.converter;
 
+import com.example.demo.domain.review.dto.MyReviewResponse;
 import com.example.demo.domain.review.dto.ReviewResponse;
 import com.example.demo.domain.review.dto.StoreReviewResponse;
 import com.example.demo.domain.review.entity.Review;
+import com.example.demo.domain.review.entity.ReviewPhoto;
 import java.util.List;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +18,7 @@ public class ReviewConverter {
      */
     public ReviewResponse toResponse(Review review) {
         List<String> photoUrls = review.getReviewPhotos().stream()
-                .map(photo -> photo.getPhotoUrl())
+                .map(ReviewPhoto::getPhotoUrl)
                 .toList();
 
         return new ReviewResponse(
@@ -39,6 +41,22 @@ public class ReviewConverter {
                 review.getId(),
                 review.getMember().getId(),
                 review.getMember().getNickname(),
+                review.getRating(),
+                review.getContent(),
+                review.getCreatedAt()
+        );
+    }
+
+    /**
+     * 내가 작성한 리뷰 목록 응답으로 변환합니다.
+     *
+     * <p>과제 조건에 따라 사진 목록은 제외합니다.</p>
+     */
+    public MyReviewResponse toMyReviewResponse(Review review) {
+        return new MyReviewResponse(
+                review.getId(),
+                review.getStore().getId(),
+                review.getStore().getName(),
                 review.getRating(),
                 review.getContent(),
                 review.getCreatedAt()
