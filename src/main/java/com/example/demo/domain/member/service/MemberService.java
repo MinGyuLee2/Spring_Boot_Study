@@ -22,6 +22,7 @@ import com.example.demo.domain.mission.repository.MemberMissionRepository;
 import com.example.demo.domain.review.repository.ReviewRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,9 @@ public class MemberService {
 
     // 회원 엔티티를 저장하거나 조회하는 JPA Repository입니다.
     private final MemberRepository memberRepository;
+
+    // 회원가입 시 평문 비밀번호를 BCrypt 해시로 변환합니다.
+    private final PasswordEncoder passwordEncoder;
 
     // 회원과 음식 카테고리의 다대다 관계를 연결 테이블 엔티티로 저장합니다.
     private final MemberFoodPreferenceRepository memberFoodPreferenceRepository;
@@ -56,10 +60,14 @@ public class MemberService {
      */
     @Transactional
     public MemberSignUpResponse signUp(MemberSignUpRequest request) {
+        if (memberRepository.existsByEmail(request.email())) {
+            throw new MemberException(MemberErrorCode.MEMBER_EMAIL_DUPLICATED);
+        }
+
         // 요청 DTO의 값을 사용해 아직 영속화되지 않은 회원 엔티티를 만듭니다.
         Member member = Member.create(
                 request.email(),
-                request.password(),
+                passwordEncoder.encode(request.password()),
                 request.nickname(),
                 request.gender(),
                 request.birthDate(),

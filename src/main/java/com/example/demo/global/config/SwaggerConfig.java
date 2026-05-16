@@ -1,10 +1,7 @@
 package com.example.demo.global.config;
 
-import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,25 +23,9 @@ public class SwaggerConfig {
                 .description("10기 Swagger")
                 .version("0.0.1");
 
-        // Swagger UI에서 사용할 인증 방식의 이름입니다.
-        String securityScheme = "JWT TOKEN";
-
-        // 모든 API 요청에 JWT 인증을 적용할 수 있도록 보안 요구사항을 추가합니다.
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(securityScheme);
-
-        // Authorization 헤더에 Bearer JWT 토큰을 넣는 HTTP 인증 방식을 정의합니다.
-        Components components = new Components()
-                .addSecuritySchemes(securityScheme, new SecurityScheme()
-                        .name(securityScheme)
-                        .type(SecurityScheme.Type.HTTP)
-                        .scheme("bearer")
-                        .bearerFormat("JWT"));
-
-        // OpenAPI 객체에 문서 정보, 서버 URL, 인증 설정을 합쳐서 반환합니다.
+        // OpenAPI 객체에 문서 정보와 서버 URL을 합쳐서 반환합니다.
         return new OpenAPI()
                 .info(info)
-                .addServersItem(new Server().url("/"))
-                .addSecurityItem(securityRequirement)
-                .components(components);
+                .addServersItem(new Server().url("/"));
     }
 }
