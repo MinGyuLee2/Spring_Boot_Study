@@ -13,7 +13,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum MemberErrorCode implements BaseErrorCode {
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER404", "Member not found");
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER404", "Member not found"),
+    MEMBER_EMAIL_DUPLICATED(HttpStatus.CONFLICT, "MEMBER409", "Email already exists");
 
     // GlobalExceptionHandler가 이 값들을 읽어 실패 응답을 만듭니다.
     private final HttpStatus httpStatus;

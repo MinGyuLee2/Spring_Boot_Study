@@ -38,7 +38,7 @@ public class Member extends SoftDeleteBaseEntity {
     private String nickname;
 
     // 로그인 또는 회원 식별에 사용할 이메일입니다.
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, unique = true, length = 100)
     private String email;
 
     // 실제 서비스에서는 반드시 암호화된 비밀번호를 저장해야 합니다.

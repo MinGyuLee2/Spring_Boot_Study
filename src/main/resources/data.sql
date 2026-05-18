@@ -25,7 +25,7 @@ values (
     1,
     'nickname012',
     'dlatplf@naver.com',
-    'password123',
+    '$2y$10$GfhQazQqEEww21FQKcOwrOzI9R5NGQo2b9lRIWOrCwUfgMLxGJGzG',
     'NONE',
     '2000-01-01',
     '서울 성북구 안암동',
