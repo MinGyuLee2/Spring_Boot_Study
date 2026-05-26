@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum MissionErrorCode implements BaseErrorCode {
-    MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "MISSION404", "Mission not found");
+    MISSION_NOT_FOUND(HttpStatus.NOT_FOUND, "MISSION404", "미션을 찾을 수 없습니다.");
 
     // GlobalExceptionHandler가 이 값들을 읽어 실패 응답을 만듭니다.
     private final HttpStatus httpStatus;

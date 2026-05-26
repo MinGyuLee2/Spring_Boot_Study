@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum RegionErrorCode implements BaseErrorCode {
-    REGION_NOT_FOUND(HttpStatus.NOT_FOUND, "REGION404", "Region not found");
+    REGION_NOT_FOUND(HttpStatus.NOT_FOUND, "REGION404", "지역을 찾을 수 없습니다.");
 
     // GlobalExceptionHandler가 이 값들을 읽어 실패 응답을 만듭니다.
     private final HttpStatus httpStatus;
