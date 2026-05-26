@@ -1,13 +1,14 @@
 package com.example.demo.domain.member.converter;
 
-import com.example.demo.domain.member.entity.MemberFoodPreference;
+import com.example.demo.domain.member.dto.AuthTokenResponse;
 import com.example.demo.domain.member.dto.MemberCompletedMissionCountResponse;
 import com.example.demo.domain.member.dto.MemberMyPageResponse;
 import com.example.demo.domain.member.dto.MemberPointResponse;
 import com.example.demo.domain.member.dto.MemberResponse;
 import com.example.demo.domain.member.dto.MemberSignUpResponse;
-import java.util.List;
 import com.example.demo.domain.member.entity.Member;
+import com.example.demo.domain.member.entity.MemberFoodPreference;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,7 +32,7 @@ public class MemberConverter {
      *
      * <p>회원 선호 음식은 연결 엔티티를 거쳐 음식 카테고리 ID 목록으로 변환합니다.</p>
      */
-    public MemberSignUpResponse toSignUpResponse(Member member) {
+    public MemberSignUpResponse toSignUpResponse(Member member, AuthTokenResponse token) {
         List<Long> foodCategoryIds = member.getFoodPreferences().stream()
                 .map(MemberFoodPreference::getFoodCategory)
                 .map(foodCategory -> foodCategory.getId())
@@ -46,7 +47,8 @@ public class MemberConverter {
                 member.getAddress(),
                 foodCategoryIds,
                 member.getStatus(),
-                member.getTotalPoint()
+                member.getTotalPoint(),
+                token
         );
     }
 

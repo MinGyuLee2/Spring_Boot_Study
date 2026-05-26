@@ -8,6 +8,8 @@ import com.example.demo.global.apiPayload.ApiResponse;
 import com.example.demo.global.apiPayload.code.GeneralErrorCode;
 import com.example.demo.global.apiPayload.code.GeneralSuccessCode;
 import com.example.demo.global.exception.DomainException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -51,6 +53,12 @@ public class StoreController {
      * <p>REST 관점에서 리뷰는 가게 하위 리소스로 볼 수 있으므로
      * /stores/{storeId}/reviews 경로를 사용합니다.</p>
      */
+    @Operation(summary = "가게 리뷰 작성")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "리뷰 작성 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "인증 필요")
+    })
     @PostMapping(value = "/{storeId}/reviews", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<ReviewResponse>> createReview(
             @RequestHeader(value = "X-Member-Id", defaultValue = "1") Long memberId,
