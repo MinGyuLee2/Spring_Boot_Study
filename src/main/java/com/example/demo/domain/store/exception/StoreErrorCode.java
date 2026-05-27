@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum StoreErrorCode implements BaseErrorCode {
-    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "STORE404", "Store not found");
+    STORE_NOT_FOUND(HttpStatus.NOT_FOUND, "STORE404", "가게를 찾을 수 없습니다.");
 
     // GlobalExceptionHandler가 이 값들을 읽어 실패 응답을 만듭니다.
     private final HttpStatus httpStatus;

@@ -13,8 +13,10 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum MemberErrorCode implements BaseErrorCode {
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER404", "Member not found"),
-    MEMBER_EMAIL_DUPLICATED(HttpStatus.CONFLICT, "MEMBER409", "Email already exists");
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER404", "회원을 찾을 수 없습니다."),
+    MEMBER_EMAIL_DUPLICATED(HttpStatus.CONFLICT, "MEMBER409", "이미 존재하는 이메일입니다."),
+    MEMBER_LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "MEMBER401", "이메일 또는 비밀번호가 올바르지 않습니다."),
+    KAKAO_OAUTH_FAILED(HttpStatus.BAD_REQUEST, "KAKAO400", "카카오 로그인에 실패했습니다.");
 
     // GlobalExceptionHandler가 이 값들을 읽어 실패 응답을 만듭니다.
     private final HttpStatus httpStatus;

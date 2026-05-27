@@ -13,7 +13,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum FoodCategoryErrorCode implements BaseErrorCode {
-    FOOD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "FOOD404", "Food category not found");
+    FOOD_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "FOOD404", "음식 카테고리를 찾을 수 없습니다.");
 
     // GlobalExceptionHandler가 이 값들을 읽어 실패 응답을 만듭니다.
     private final HttpStatus httpStatus;

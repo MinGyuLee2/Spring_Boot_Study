@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * Spring Security가 로그인 요청의 email로 회원을 찾을 때 사용하는 서비스입니다.
+ * Spring Security가 기본 임시 계정을 만들지 않도록 애플리케이션 회원 조회 방식을 등록합니다.
  */
 @Service
 @RequiredArgsConstructor
@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Member not found: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다: " + email));
 
         return User.withUsername(member.getEmail())
                 .password(member.getPassword())

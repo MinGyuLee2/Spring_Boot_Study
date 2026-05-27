@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,15 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "social_account")
+@Table(
+        name = "social_account",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_social_account_provider_user",
+                        columnNames = {"provider", "provider_user_id"}
+                )
+        }
+)
 public class SocialAccount extends BaseTimeEntity {
 
     // 소셜 계정 테이블의 기본 키입니다.
@@ -49,4 +58,20 @@ public class SocialAccount extends BaseTimeEntity {
     // 소셜 계정 프로필 이미지 URL입니다.
     @Column(name = "profile_image_url", length = 255)
     private String profileImageUrl;
+
+    public static SocialAccount create(
+            Member member,
+            SocialProvider provider,
+            String providerUserId,
+            String email,
+            String profileImageUrl
+    ) {
+        SocialAccount socialAccount = new SocialAccount();
+        socialAccount.member = member;
+        socialAccount.provider = provider;
+        socialAccount.providerUserId = providerUserId;
+        socialAccount.email = email;
+        socialAccount.profileImageUrl = profileImageUrl;
+        return socialAccount;
+    }
 }

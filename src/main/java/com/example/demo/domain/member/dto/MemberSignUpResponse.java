@@ -17,6 +17,7 @@ public record MemberSignUpResponse(
         String address,
         List<Long> foodCategoryIds,
         MemberStatus status,
-        Integer totalPoint
+        Integer totalPoint,
+        AuthTokenResponse token
 ) {
 }

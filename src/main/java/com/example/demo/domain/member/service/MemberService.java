@@ -5,6 +5,7 @@ import com.example.demo.domain.food.exception.FoodCategoryErrorCode;
 import com.example.demo.domain.food.exception.FoodCategoryException;
 import com.example.demo.domain.food.repository.FoodCategoryRepository;
 import com.example.demo.domain.member.converter.MemberConverter;
+import com.example.demo.domain.member.dto.AuthTokenResponse;
 import com.example.demo.domain.member.dto.MemberCompletedMissionCountResponse;
 import com.example.demo.domain.member.dto.MemberMyPageResponse;
 import com.example.demo.domain.member.dto.MemberPointResponse;
@@ -20,6 +21,7 @@ import com.example.demo.domain.member.repository.MemberRepository;
 import com.example.demo.domain.mission.enums.MemberMissionStatus;
 import com.example.demo.domain.mission.repository.MemberMissionRepository;
 import com.example.demo.domain.review.repository.ReviewRepository;
+import com.example.demo.global.auth.JwtTokenProvider;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,6 +53,9 @@ public class MemberService {
 
     // Entity를 API 응답 DTO로 변환하는 역할입니다.
     private final MemberConverter memberConverter;
+
+    // 회원가입 성공 직후 로그인 상태로 만들기 위한 JWT를 발급합니다.
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 회원가입을 처리합니다.
@@ -90,7 +95,8 @@ public class MemberService {
         // 응답 변환 시 foodPreferences 컬렉션을 바로 사용할 수 있도록 메모리 객체도 동기화합니다.
         savedMember.getFoodPreferences().addAll(preferences);
 
-        return memberConverter.toSignUpResponse(savedMember);
+        AuthTokenResponse token = jwtTokenProvider.generateAccessToken(savedMember);
+        return memberConverter.toSignUpResponse(savedMember, token);
     }
 
     /**
