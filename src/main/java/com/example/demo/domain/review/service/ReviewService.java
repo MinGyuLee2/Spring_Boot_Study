@@ -71,11 +71,11 @@ public class ReviewService {
     /**
      * 내가 작성한 리뷰 목록을 커서 기반으로 조회합니다.
      */
-    public MyReviewCursorResponse getMyReviews(MyReviewCursorRequest request) {
-        validateMember(request.memberId());
+    public MyReviewCursorResponse getMyReviews(Long memberId, MyReviewCursorRequest request) {
+        validateMember(memberId);
 
         ReviewCursor cursor = parseCursor(request.cursor(), request.sortType());
-        List<Review> reviews = findMyReviewsByCursor(request, cursor);
+        List<Review> reviews = findMyReviewsByCursor(memberId, request, cursor);
 
         boolean hasNext = reviews.size() > request.size();
         List<Review> currentReviews = reviews.stream()
@@ -150,28 +150,28 @@ public class ReviewService {
     /**
      * 정렬 기준에 맞는 커서 조회 쿼리를 선택합니다.
      */
-    private List<Review> findMyReviewsByCursor(MyReviewCursorRequest request, ReviewCursor cursor) {
+    private List<Review> findMyReviewsByCursor(Long memberId, MyReviewCursorRequest request, ReviewCursor cursor) {
         PageRequest pageRequest = PageRequest.of(0, request.size() + 1);
 
         return switch (request.sortType()) {
             case ID_ASC -> reviewRepository.findMyReviewsByIdAsc(
-                    request.memberId(),
+                    memberId,
                     cursor.reviewId(),
                     pageRequest
             );
             case ID_DESC -> reviewRepository.findMyReviewsByIdDesc(
-                    request.memberId(),
+                    memberId,
                     cursor.reviewId(),
                     pageRequest
             );
             case RATING_ASC -> reviewRepository.findMyReviewsByRatingAsc(
-                    request.memberId(),
+                    memberId,
                     cursor.rating(),
                     cursor.reviewId(),
                     pageRequest
             );
             case RATING_DESC -> reviewRepository.findMyReviewsByRatingDesc(
-                    request.memberId(),
+                    memberId,
                     cursor.rating(),
                     cursor.reviewId(),
                     pageRequest

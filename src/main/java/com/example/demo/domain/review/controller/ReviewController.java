@@ -5,9 +5,11 @@ import com.example.demo.domain.review.dto.MyReviewCursorResponse;
 import com.example.demo.domain.review.dto.ReviewResponse;
 import com.example.demo.domain.review.service.ReviewService;
 import com.example.demo.global.apiPayload.ApiResponse;
+import com.example.demo.global.auth.AuthMemberPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,9 +30,10 @@ public class ReviewController {
      */
     @PostMapping(value = "/me", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ApiResponse<MyReviewCursorResponse> getMyReviews(
+            @AuthenticationPrincipal AuthMemberPrincipal principal,
             @Valid @RequestBody MyReviewCursorRequest request
     ) {
-        return ApiResponse.onSuccess(reviewService.getMyReviews(request));
+        return ApiResponse.onSuccess(reviewService.getMyReviews(principal.memberId(), request));
     }
 
     /**

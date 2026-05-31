@@ -1,6 +1,46 @@
 # 🍃 Spring_Boot_A
 SSUMC 10기 SpringBoot 스터디 A조
 
+## 🚀 배포 준비
+
+### 로컬 실행
+```bash
+./gradlew bootRun
+```
+
+기본 프로필은 H2 인메모리 DB를 사용합니다.
+
+### 프로덕션 환경변수
+배포 환경에서는 `SPRING_PROFILES_ACTIVE=prod`를 설정하고 아래 값을 등록합니다.
+
+```bash
+PORT=8080
+SPRING_PROFILES_ACTIVE=prod
+SPRING_DATASOURCE_URL=jdbc:mysql://your-host:3306/your-database?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+SPRING_DATASOURCE_USERNAME=your_database_user
+SPRING_DATASOURCE_PASSWORD=your_database_password
+SPRING_JPA_HIBERNATE_DDL_AUTO=update
+JWT_SECRET=replace_with_a_long_random_secret_at_least_32_bytes
+JWT_ACCESS_TOKEN_VALIDITY_IN_SECONDS=3600
+KAKAO_CLIENT_ID=your_kakao_rest_api_key
+KAKAO_CLIENT_SECRET=your_kakao_client_secret
+KAKAO_REDIRECT_URI=https://your-domain.com/oauth/kakao/callback
+```
+
+### Docker 빌드 및 실행
+```bash
+docker build -t spring-boot-a .
+docker run --env-file .env -p 8080:8080 spring-boot-a
+```
+
+### 개인 GitHub 레포로 옮기기
+개인 GitHub에서 빈 저장소를 만든 뒤, 아래처럼 `personal` 원격을 추가해서 현재 `Dominic/main` 브랜치를 `main`으로 올릴 수 있습니다.
+
+```bash
+git remote add personal git@github.com:YOUR_GITHUB_ID/YOUR_REPOSITORY.git
+git push personal Dominic/main:main
+```
+
 ## 💻 Member
 |하나|엘시|동구|도미닉|민스|
 | :---------:|:----------:|:----------:|:----------:|:----------:|
