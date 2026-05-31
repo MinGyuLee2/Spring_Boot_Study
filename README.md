@@ -126,6 +126,27 @@ docker build -t spring-boot-study .
 docker run --env-file .env -p 8080:8080 spring-boot-study
 ```
 
+## EC2 배포
+
+EC2에 Docker와 Docker Compose가 설치되어 있다면 아래 순서로 배포할 수 있습니다.
+
+```bash
+git clone https://github.com/MinGyuLee2/Spring_Boot_Study.git
+cd Spring_Boot_Study
+cp .env.production.example .env
+vi .env
+docker compose up -d --build
+```
+
+배포 후 컨테이너 상태와 로그를 확인합니다.
+
+```bash
+docker compose ps
+docker compose logs -f app
+```
+
+애플리케이션은 기본적으로 `http://EC2_PUBLIC_IP:8080`에서 실행됩니다. EC2 보안 그룹에서 인바운드 TCP `8080` 포트를 열어야 외부 접속이 가능합니다.
+
 ## 학습 포인트
 
 - 도메인별 Controller, Service, Repository 계층 분리
