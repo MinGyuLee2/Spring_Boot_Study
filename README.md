@@ -1,17 +1,109 @@
-# 🍃 Spring_Boot_A
-SSUMC 10기 SpringBoot 스터디 A조
+# Spring Boot Study
 
-## 🚀 배포 준비
+Spring Boot 학습을 위해 만든 음식점 리뷰 서비스 API 프로젝트입니다. 회원 인증, 음식 카테고리, 지역, 가게, 미션, 리뷰 도메인을 나누어 구현하며 Spring Boot 기반 백엔드 구조와 REST API 설계를 연습합니다.
 
-### 로컬 실행
+## 주요 기능
+
+- 회원가입, 로그인, JWT 기반 인증
+- 카카오 OAuth 로그인 연동
+- 회원 마이페이지, 포인트, 완료 미션 수 조회
+- 음식 카테고리 및 지역 조회
+- 가게 리뷰 목록 조회 및 리뷰 작성
+- 내가 작성한 리뷰 커서 기반 조회
+- 진행 중인 미션 조회, 미션 도전, 미션 완료 처리
+- Swagger UI를 통한 API 문서 확인
+
+## 기술 스택
+
+- Java 17
+- Spring Boot 4
+- Spring Web MVC
+- Spring Data JPA
+- Spring Security
+- Bean Validation
+- JWT
+- H2 Database
+- MySQL
+- Gradle
+- Docker
+
+## 프로젝트 구조
+
+```text
+src
+├── main
+│   ├── java/com/example/demo
+│   │   ├── domain
+│   │   │   ├── food
+│   │   │   ├── member
+│   │   │   ├── mission
+│   │   │   ├── region
+│   │   │   ├── review
+│   │   │   └── store
+│   │   └── global
+│   │       ├── apiPayload
+│   │       ├── auth
+│   │       ├── config
+│   │       ├── entity
+│   │       └── exception
+│   └── resources
+└── test
+```
+
+## API 요약
+
+| Domain | Method | Endpoint | Description |
+| --- | --- | --- | --- |
+| Auth | POST | `/api/v1/auth/login` | 로그인 |
+| Auth | POST | `/api/v1/auth/oauth/kakao` | 카카오 로그인 |
+| Member | POST | `/api/v1/members/signup` | 회원가입 |
+| Member | GET | `/api/v1/members/me` | 내 정보 조회 |
+| Member | GET | `/api/v1/members/me/points` | 내 포인트 조회 |
+| Member | GET | `/api/v1/members/me/missions/completed/count` | 완료 미션 수 조회 |
+| Food | GET | `/api/v1/food-categories/{foodCategoryId}` | 음식 카테고리 조회 |
+| Region | GET | `/api/v1/regions/{regionId}` | 지역 조회 |
+| Store | GET | `/api/v1/stores/{storeId}/reviews` | 가게 리뷰 목록 조회 |
+| Store | POST | `/api/v1/stores/{storeId}/reviews` | 가게 리뷰 작성 |
+| Review | POST | `/api/v1/reviews/me` | 내가 작성한 리뷰 목록 조회 |
+| Review | GET | `/api/v1/reviews/{reviewId}` | 리뷰 상세 조회 |
+| Mission | GET | `/api/v1/missions/available` | 도전 가능한 미션 조회 |
+| Member Mission | GET | `/api/v1/member-missions` | 진행 중인 미션 조회 |
+| Member Mission | POST | `/api/v1/member-missions/ongoing` | 미션 도전 |
+| Member Mission | PATCH | `/api/v1/member-missions/{memberMissionId}/complete` | 미션 완료 |
+
+## 로컬 실행
+
 ```bash
 ./gradlew bootRun
 ```
 
-기본 프로필은 H2 인메모리 DB를 사용합니다.
+기본 설정은 H2 인메모리 DB를 사용합니다.
 
-### 프로덕션 환경변수
-배포 환경에서는 `SPRING_PROFILES_ACTIVE=prod`를 설정하고 아래 값을 등록합니다.
+- API 서버: `http://localhost:8080`
+- Swagger UI: `http://localhost:8080/swagger-ui/index.html`
+- H2 Console: `http://localhost:8080/h2-console`
+
+## 테스트 및 빌드
+
+```bash
+./gradlew test
+./gradlew clean bootJar
+```
+
+## 환경변수
+
+로컬 개발에서는 기본값으로 실행할 수 있습니다. 카카오 로그인을 테스트하거나 운영 환경에 배포할 때는 `.env.example`을 참고해 환경변수를 설정합니다.
+
+```bash
+KAKAO_CLIENT_ID=your_kakao_rest_api_key
+KAKAO_CLIENT_SECRET=your_kakao_client_secret
+KAKAO_REDIRECT_URI=http://localhost:8082/oauth/kakao/callback
+JWT_SECRET=replace_with_a_long_random_secret_at_least_32_bytes
+```
+
+## 프로덕션 설정
+
+운영 환경에서는 `SPRING_PROFILES_ACTIVE=prod`를 사용합니다.
 
 ```bash
 PORT=8080
@@ -27,82 +119,17 @@ KAKAO_CLIENT_SECRET=your_kakao_client_secret
 KAKAO_REDIRECT_URI=https://your-domain.com/oauth/kakao/callback
 ```
 
-### Docker 빌드 및 실행
-```bash
-docker build -t spring-boot-a .
-docker run --env-file .env -p 8080:8080 spring-boot-a
-```
-
-### 개인 GitHub 레포로 옮기기
-개인 GitHub에서 빈 저장소를 만든 뒤, 아래처럼 `personal` 원격을 추가해서 현재 `Dominic/main` 브랜치를 `main`으로 올릴 수 있습니다.
+## Docker 실행
 
 ```bash
-git remote add personal git@github.com:YOUR_GITHUB_ID/YOUR_REPOSITORY.git
-git push personal Dominic/main:main
+docker build -t spring-boot-study .
+docker run --env-file .env -p 8080:8080 spring-boot-study
 ```
 
-## 💻 Member
-|하나|엘시|동구|도미닉|민스|
-| :---------:|:----------:|:----------:|:----------:|:----------:|
-|[송채원](https://github.com/chaerishme)|[이찬형](https://github.com/lclee0520)|[원도경](https://github.com/gangdogang)|[이민규](https://github.com/MinGyuLee2)|[김민성](https://github.com/minseongid)|
+## 학습 포인트
 
-## 📁 디렉토리 구조
-- src 디렉토리를 실제 작업을 진행하는 Spring Boot의 src와 일치시켜 주세요.
-- 미션 및 실습, 주차를 정확히 구분하기 위해 아래의 commit 규칙을 ‼️반드시‼️ 준수하여 commit 후 push 해 주세요.
-```bash
-├─.github
-│  └─PULL_REQUEST_TEMPLATE
-│  └─ISSUE_TEMPLATE
-├─README.md
-└─src
-    ├─main
-    │
-    └─test
-    │
-    └─...
-            
-``` 
-## 🎨 commit 규칙
-- 해당 commit이 미션에 관한 것일 경우: "mission/#해당 주차"
-
-```
-Ex) 1주차 미션 수행 후
-mission/#01
-mission/#01 - 서버 환경설정
-```
-
-<br>
-
-- 해당 commit이 실습에 관한 것일 경우: "practice/#해당 주차"
-```
-Ex) 2주차 실습 수행 후
-practice/#02
-practice/#02 - ㅇㅇ 어노테이션 구현
-```
-- 해당 주차에 미션이나 실습이 없는 경우, 있는 주차에만 수행하시면 됩니다.
-
-## 🌳 branch 규칙
-```bash
-├─main
-    ├─angela/main
-    │  └─angela/#1
-``` 
-
-1. `닉네임/main 브랜치`가 기본 브랜치로 pr 보낼 때 root 브랜치(main 브랜치)가 아닌 닉네임/main 브랜치로 올립니다.
-2. 매주 워크북, 실습, 그리고 미션은 각자의 닉네임/main 브랜치를 base 브랜치로 삼아 `닉네임/이슈번호 브랜치`를 생성하여 관련 파일을 업로드합니다.
-3. 모든 팀원들의 approve를 받으면, pr을 머지하고 해당 pr을 생성한 브랜치(닉네임/이슈번호 브랜치)는 삭제합니다. approve와 merge는 스터디 진행 중에 이루어집니다.
-
-## 🔖 커밋 컨벤션
-| Message  | 설명                                              |
-| :------: | :------------------------------------------------ |
-|   mission   | 미션 수행                                  |
-|   practice   | 실습 수행                             |
-|   keyword    | 키워드 정리                                         |
-|   workbook   | 워크북 정리                                         |
-|  fix   | 버그 수정 |
-| docs | 문서 수정                                     |
-| comment | 주석 추가 및 변경                                     |
-|   test   | 테스트 코드 추가                                       |
-|  rename   | 파일 혹은 폴더명 수정                |
-|  remove   | 파일 혹은 폴더 삭제                |
-|  chore   | 기타 변경사항                |
+- 도메인별 Controller, Service, Repository 계층 분리
+- 공통 API 응답 포맷과 전역 예외 처리
+- Spring Security 필터 기반 JWT 인증
+- JPA 엔티티 연관관계와 커서 기반 페이지네이션
+- 개발 환경과 운영 환경 설정 분리
